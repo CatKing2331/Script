@@ -11772,8 +11772,19 @@ TextPadding=10,
 local F=v.Create(false)
 
 F.UIElements.Main.Size=UDim2.new(0,C.Width,0,0)
-F.UIElements.Main.BackgroundTransparency=0.6 -- Force Transparency for Frosted Glass
-F.UIElements.Main.BackgroundColor3=Color3.new(1,1,1) -- White background for dialog
+F.UIElements.Main.BackgroundTransparency=0.85 -- Higher transparency for frosted glass
+F.UIElements.Main.BackgroundColor3=Color3.new(1,1,1) -- White transparent background
+
+-- Add rounded corners to dialog
+local dialogCorner = F.UIElements.Main:FindFirstChild("UICorner")
+if not dialogCorner then
+    ak("UICorner",{
+        CornerRadius=UDim.new(0,12),
+        Parent=F.UIElements.Main
+    })
+else
+    dialogCorner.CornerRadius=UDim.new(0,12)
+end
 
 local G=ak("Frame",{
 Size=UDim2.new(1,0,0,0),
@@ -11892,14 +11903,26 @@ for N,O in next,C.Buttons do
 local P=an(O.Title,O.Icon,O.Callback,O.Variant,L,F,false)
 table.insert(M,P)
 
-if P and P:FindFirstChild("TextLabel") then
-    P.TextLabel.ThemeTag = nil -- Detach from theme
-    P.TextLabel.TextColor3 = Color3.new(0,0,0)
-    P.TextLabel.TextTransparency = 0
-elseif P and P:FindFirstChild("Title") then
-    P.Title.ThemeTag = nil
-    P.Title.TextColor3 = Color3.new(0,0,0)
-    P.Title.TextTransparency = 0
+-- Find all TextLabels in button and set to black
+if P then
+    for _, child in pairs(P:GetDescendants()) do
+        if child:IsA("TextLabel") then
+            child.ThemeTag = nil
+            child.TextColor3 = Color3.new(0,0,0)
+            child.TextTransparency = 0
+        end
+    end
+    -- Also check direct children
+    if P:FindFirstChild("TextLabel") then
+        P.TextLabel.ThemeTag = nil
+        P.TextLabel.TextColor3 = Color3.new(0,0,0)
+        P.TextLabel.TextTransparency = 0
+    end
+    if P:FindFirstChild("Title") then
+        P.Title.ThemeTag = nil
+        P.Title.TextColor3 = Color3.new(0,0,0)
+        P.Title.TextTransparency = 0
+    end
 end
 end
 
