@@ -3117,9 +3117,11 @@ local ar=a.load'j'.New
 for as,at in next,af.Buttons do
 local btn = ar(at.Title,at.Icon,at.Callback,at.Variant,ap,ah)
     if btn and btn:FindFirstChild("TextLabel") then
+        btn.TextLabel.ThemeTag = nil -- Detach from theme updates
         btn.TextLabel.TextColor3 = Color3.new(0,0,0)
         btn.TextLabel.TextTransparency = 0
     elseif btn and btn:FindFirstChild("Title") then
+         btn.Title.ThemeTag = nil
          btn.Title.TextColor3 = Color3.new(0,0,0)
          btn.Title.TextTransparency = 0
     end
@@ -11888,10 +11890,13 @@ local M={}
 for N,O in next,C.Buttons do
 local P=an(O.Title,O.Icon,O.Callback,O.Variant,L,F,false)
 table.insert(M,P)
+
 if P and P:FindFirstChild("TextLabel") then
+    P.TextLabel.ThemeTag = nil -- Detach from theme
     P.TextLabel.TextColor3 = Color3.new(0,0,0)
     P.TextLabel.TextTransparency = 0
 elseif P and P:FindFirstChild("Title") then
+    P.Title.ThemeTag = nil
     P.Title.TextColor3 = Color3.new(0,0,0)
     P.Title.TextTransparency = 0
 end
