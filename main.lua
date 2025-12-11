@@ -12195,6 +12195,13 @@ local as=protectgui or(syn and syn.protect_gui)or function()end
 
 local au=gethui and gethui()or(aj or game.Players.LocalPlayer:WaitForChild"PlayerGui")
 
+-- 销毁已存在的 WindUI GUI，防止重复创建菜单
+for _,v in pairs(au:GetChildren())do
+if v:IsA("ScreenGui")and(v.Name=="WindUI"or v.Name:find("WindUI/"))then
+v:Destroy()
+end
+end
+
 local av=ap("UIScale",{
 Scale=aa.Scale,
 })
