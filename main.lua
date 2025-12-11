@@ -2962,6 +2962,7 @@ end
 
 ah.UIElements.Main.AutomaticSize="Y"
 ah.UIElements.Main.Size=UDim2.new(0,aj,0,0)
+ah.UIElements.Main.BackgroundTransparency=0.6 -- Force Transparency for Frosted Glass
 
 
 
@@ -11762,6 +11763,7 @@ TextPadding=10,
 local F=v.Create(false)
 
 F.UIElements.Main.Size=UDim2.new(0,C.Width,0,0)
+F.UIElements.Main.BackgroundTransparency=0.6 -- Force Transparency for Frosted Glass
 
 local G=ak("Frame",{
 Size=UDim2.new(1,0,0,0),
@@ -12194,13 +12196,6 @@ local ar=a.load'q'
 local as=protectgui or(syn and syn.protect_gui)or function()end
 
 local au=gethui and gethui()or(aj or game.Players.LocalPlayer:WaitForChild"PlayerGui")
-
--- 销毁已存在的 WindUI GUI，防止重复创建菜单
-for _,v in pairs(au:GetChildren())do
-if v:IsA("ScreenGui")and(v.Name=="WindUI"or v.Name:find("WindUI/"))then
-v:Destroy()
-end
-end
 
 local av=ap("UIScale",{
 Scale=aa.Scale,
