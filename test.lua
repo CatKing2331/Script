@@ -11,6 +11,7 @@ Config = {
 
 }
 local function main()
+-- script here
 loadstring(game:HttpGet("https://raw.githubusercontent.com/NakanoNino455/roblox/refs/heads/main/change-UI.lua"))()
 end
 
