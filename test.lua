@@ -1,6 +1,6 @@
 --[[
-    响应式密钥系统 - 支持PC和移动端
-    RESPONSIVE KEY SYSTEM UI
+    响应式密钥系统 - 移动端修复版 (Mobile Fix)
+    修复了 CoreGui 崩溃问题和 GetKey 失败问题
 ]]
 
 Config = {
@@ -9,19 +9,43 @@ Config = {
     provider = "老外"
 }
 
-local function main()
-    -- 密钥验证成功后执行的脚本
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/NakanoNino455/roblox/refs/heads/main/change-UI.lua"))()
+-- 防止重复运行
+if getgenv().ResponsiveKeySys then 
+    warn("Script already running!")
+    return 
 end
-
-if getgenv().ResponsiveKeySys then return end
 getgenv().ResponsiveKeySys = true
 
 -- 服务
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
-local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+
+local LocalPlayer = Players.LocalPlayer
+
+-- 1. 修复父级问题：手机端优先使用 PlayerGui
+local function GetUIParent()
+    -- 尝试获取 PlayerGui，这在手机上最稳定
+    local success, playerGui = pcall(function()
+        return LocalPlayer:WaitForChild("PlayerGui", 5)
+    end)
+    
+    if success and playerGui then
+        return playerGui
+    end
+    
+    -- 如果失败，尝试 CoreGui (仅作为备选)
+    return CoreGui
+end
+
+local function main()
+    -- 密钥验证成功后执行的脚本
+    warn("Key Verified! Loading Script...")
+    pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/NakanoNino455/roblox/refs/heads/main/change-UI.lua"))()
+    end)
+end
 
 -- 检测设备类型
 local function isMobile()
@@ -71,12 +95,19 @@ local function Tween(obj, time, props)
 end
 
 -- 创建主界面
+local parentTarget = GetUIParent()
+if not parentTarget then
+    warn("Could not find UI Parent!")
+    getgenv().ResponsiveKeySys = false
+    return
+end
+
 local ScreenGui = Create("ScreenGui", {
-    Name = "ResponsiveKeySystem", 
-    Parent = CoreGui, 
+    Name = "ResponsiveKeySystem_MobileFix", 
+    Parent = parentTarget, 
     ResetOnSpawn = false,
     ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-    DisplayOrder = 999,
+    DisplayOrder = 9999, -- 确保在最上层
     IgnoreGuiInset = true
 })
 
@@ -147,7 +178,6 @@ local InputLabel = Create("TextLabel", {
     Name = "InputLabel",
     Parent = ContentFrame,
     BackgroundTransparency = 1,
-    -- FIX: Changed : to or
     Position = UDim2.new(0.5, 0, 0, isMobile() and 15 or 20),
     Size = UDim2.new(0.85, 0, 0, 20),
     Font = Enum.Font.GothamMedium,
@@ -163,7 +193,6 @@ local KeyInputFrame = Create("Frame", {
     Name = "KeyInputFrame",
     Parent = ContentFrame,
     BackgroundColor3 = UIConfig.Colors.Surface,
-    -- FIX: Changed : to or
     Position = UDim2.new(0.5, 0, 0, isMobile() and 45 or 50),
     Size = UDim2.new(0.85, 0, 0, isMobile() and 45 or 50),
     AnchorPoint = Vector2.new(0.5, 0)
@@ -187,7 +216,6 @@ local KeyInput = Create("TextBox", {
     PlaceholderText = "请在此输入密钥...",
     TextColor3 = UIConfig.Colors.Text,
     PlaceholderColor3 = UIConfig.Colors.TextDim,
-    -- FIX: Changed : to or
     TextSize = isMobile() and 14 or 15,
     TextXAlignment = Enum.TextXAlignment.Left,
     AnchorPoint = Vector2.new(0, 0.5),
@@ -199,7 +227,6 @@ local ButtonsFrame = Create("Frame", {
     Name = "Buttons",
     Parent = ContentFrame,
     BackgroundTransparency = 1,
-    -- FIX: Changed : to or
     Position = UDim2.new(0.5, 0, 0, isMobile() and 110 or 120),
     Size = UDim2.new(0.85, 0, 0, isMobile() and 140 or 150),
     AnchorPoint = Vector2.new(0.5, 0)
@@ -212,25 +239,20 @@ local function CreateButton(name, text, position, color, textColor)
         Parent = ButtonsFrame,
         BackgroundColor3 = color,
         Position = position,
-        -- FIX: Changed : to or
         Size = UDim2.new(1, 0, 0, isMobile() and 42 or 45),
         Font = Enum.Font.GothamBold,
         Text = text,
         TextColor3 = textColor or Color3.fromRGB(255, 255, 255),
-        -- FIX: Changed : to or
         TextSize = isMobile() and 14 or 15,
         AutoButtonColor = false,
         AnchorPoint = Vector2.new(0.5, 0)
     })
     Create("UICorner", {CornerRadius = UDim.new(0, 10), Parent = button})
     
-    -- 点击效果
     button.MouseButton1Down:Connect(function()
-        -- FIX: Changed : to or
         Tween(button, 0.1, {Size = UDim2.new(0.95, 0, 0, isMobile() and 40 or 43)})
     end)
     button.MouseButton1Up:Connect(function()
-        -- FIX: Changed : to or
         Tween(button, 0.1, {Size = UDim2.new(1, 0, 0, isMobile() and 42 or 45)})
     end)
     
@@ -250,7 +272,6 @@ local GetKeyBtn = CreateButton(
 local CheckKeyBtn = CreateButton(
     "CheckKeyButton",
     "✓ 验证密钥 / Check Key",
-    -- FIX: Changed : to or
     UDim2.new(0.5, 0, 0, isMobile() and 52 or 55),
     UIConfig.Colors.Primary,
     Color3.fromRGB(255, 255, 255)
@@ -261,13 +282,11 @@ local StatusLabel = Create("TextLabel", {
     Name = "Status",
     Parent = ContentFrame,
     BackgroundTransparency = 1,
-    -- FIX: Changed : to or
     Position = UDim2.new(0.5, 0, 1, isMobile() and -35 or -40),
     Size = UDim2.new(0.85, 0, 0, isMobile() and 30 or 35),
     Font = Enum.Font.Gotham,
     Text = "",
     TextColor3 = UIConfig.Colors.TextDim,
-    -- FIX: Changed : to or
     TextSize = isMobile() and 12 or 13,
     TextXAlignment = Enum.TextXAlignment.Center,
     TextYAlignment = Enum.TextYAlignment.Center,
@@ -276,7 +295,6 @@ local StatusLabel = Create("TextLabel", {
     TextWrapped = true
 })
 
--- 状态消息函数
 local function ShowStatus(message, color, duration)
     StatusLabel.Text = message
     StatusLabel.TextColor3 = color
@@ -309,24 +327,40 @@ KeyInput.FocusLost:Connect(function(enterPressed)
     end
 end)
 
--- 获取密钥功能
+-- 2. 修复 Get Key 功能：增强错误处理和备用方案
 GetKeyBtn.MouseButton1Click:Connect(function()
-    ShowStatus("正在生成密钥链接... / Generating link...", UIConfig.Colors.Warning, 2)
+    ShowStatus("正在请求... / Requesting...", UIConfig.Colors.Warning, 2)
     
     local success, result = pcall(function()
-        local JunkieKeySystem = loadstring(game:HttpGet("https://junkie-development.de/sdk/JunkieKeySystem.lua"))()
+        -- 尝试加载 SDK
+        local sdkUrl = "https://junkie-development.de/sdk/JunkieKeySystem.lua"
+        local sdkScript = game:HttpGet(sdkUrl)
+        local JunkieKeySystem = loadstring(sdkScript)()
         return JunkieKeySystem.getLink(Config.api, Config.provider, Config.service)
     end)
     
     if success and result then
-        if setclipboard then
-            setclipboard(result)
-            ShowStatus("✓ 链接已复制到剪贴板! / Link copied!", UIConfig.Colors.Success, 3)
+        -- 3. 安全的剪贴板复制
+        local copySuccess = pcall(function()
+            if setclipboard then
+                setclipboard(result)
+            elseif toclipboard then
+                toclipboard(result)
+            else
+                error("No clipboard support")
+            end
+        end)
+        
+        if copySuccess then
+            ShowStatus("✓ 链接已复制! / Copied!", UIConfig.Colors.Success, 3)
         else
-            ShowStatus("链接: " .. result, UIConfig.Colors.Success, 5)
+            -- 如果复制失败，显示在输入框里
+            KeyInput.Text = result
+            ShowStatus("请手动复制链接 / Copy manually from input", UIConfig.Colors.Warning, 5)
         end
     else
-        ShowStatus("✗ 生成链接失败 / Failed to generate link", UIConfig.Colors.Error, 3)
+        ShowStatus("HTTP 请求失败 / Request Failed", UIConfig.Colors.Error, 3)
+        warn("Get Key Error: " .. tostring(result))
     end
 end)
 
@@ -335,19 +369,20 @@ CheckKeyBtn.MouseButton1Click:Connect(function()
     local userKey = KeyInput.Text:gsub("%s+", "")
     
     if userKey == "" then
-        ShowStatus("⚠ 请输入密钥 / Please enter a key", UIConfig.Colors.Warning, 2)
+        ShowStatus("⚠ 请输入密钥 / Enter key", UIConfig.Colors.Warning, 2)
         return
     end
     
-    ShowStatus("正在验证... / Validating...", UIConfig.Colors.Warning, 2)
+    ShowStatus("验证中... / Checking...", UIConfig.Colors.Warning, 2)
     
     local success, isValid = pcall(function()
-        local JunkieKeySystem = loadstring(game:HttpGet("https://junkie-development.de/sdk/JunkieKeySystem.lua"))()
+        local sdkScript = game:HttpGet("https://junkie-development.de/sdk/JunkieKeySystem.lua")
+        local JunkieKeySystem = loadstring(sdkScript)()
         return JunkieKeySystem.verifyKey(Config.api, userKey, Config.service)
     end)
     
     if success and isValid then
-        ShowStatus("✓ 验证成功! 正在加载... / Success! Loading...", UIConfig.Colors.Success, 2)
+        ShowStatus("✓ 成功! / Success!", UIConfig.Colors.Success, 2)
         
         task.wait(0.5)
         Tween(MainFrame, 0.4, {
@@ -357,9 +392,10 @@ CheckKeyBtn.MouseButton1Click:Connect(function()
         
         task.wait(0.4)
         ScreenGui:Destroy()
+        -- 运行主脚本
         main()
     else
-        ShowStatus("✗ 密钥无效 / Invalid key", UIConfig.Colors.Error, 3)
+        ShowStatus("✗ 密钥错误 / Invalid Key", UIConfig.Colors.Error, 3)
         
         -- 晃动效果
         local originalPos = KeyInputFrame.Position
@@ -372,43 +408,6 @@ CheckKeyBtn.MouseButton1Click:Connect(function()
         Tween(KeyInputFrame, 0.05, {Position = originalPos})
     end
 end)
-
--- 拖拽功能 (仅PC端)
-if not isMobile() then
-    local dragging, dragInput, dragStart, startPos
-    
-    Header.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = MainFrame.Position
-            
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-    
-    Header.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            dragInput = input
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            local delta = input.Position - dragStart
-            MainFrame.Position = UDim2.new(
-                startPos.X.Scale, 
-                startPos.X.Offset + delta.X, 
-                startPos.Y.Scale, 
-                startPos.Y.Offset + delta.Y
-            )
-        end
-    end)
-end
 
 -- 入场动画
 MainFrame.Size = UDim2.new(0, 0, 0, 0)
