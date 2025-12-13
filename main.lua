@@ -10629,24 +10629,22 @@ Visible=as.User.Enabled or false,
 },{
 aj.NewRoundFrame(as.UICorner-(as.UIPadding/2),"SquircleOutline",{
 Size=UDim2.new(1,0,1,0),
-ThemeTag={
-ImageColor3="Text",
-},
-ImageTransparency=1,
+ImageColor3=Color3.new(1,1,1),
+ImageTransparency=0,
 Name="Outline"
 },{
 ak("UIGradient",{
-Rotation=78,
+Rotation=0,
 Color=ColorSequence.new{
-ColorSequenceKeypoint.new(0.0,Color3.fromRGB(255,255,255)),
-ColorSequenceKeypoint.new(0.5,Color3.fromRGB(255,255,255)),
-ColorSequenceKeypoint.new(1.0,Color3.fromRGB(255,255,255)),
+    ColorSequenceKeypoint.new(0.00, Color3.fromHex("#FF0000")),
+    ColorSequenceKeypoint.new(0.17, Color3.fromHex("#FFFF00")),
+    ColorSequenceKeypoint.new(0.33, Color3.fromHex("#00FF00")),
+    ColorSequenceKeypoint.new(0.50, Color3.fromHex("#00FFFF")),
+    ColorSequenceKeypoint.new(0.67, Color3.fromHex("#0000FF")),
+    ColorSequenceKeypoint.new(0.83, Color3.fromHex("#FF00FF")),
+    ColorSequenceKeypoint.new(1.00, Color3.fromHex("#FF0000"))
 },
-Transparency=NumberSequence.new{
-NumberSequenceKeypoint.new(0.0,0.1),
-NumberSequenceKeypoint.new(0.5,1),
-NumberSequenceKeypoint.new(1.0,0.1),
-}
+Name="RainbowGradient"
 }),
 }),
 aj.NewRoundFrame(as.UICorner-(as.UIPadding/2),"Squircle",{
@@ -10724,6 +10722,15 @@ PaddingRight=UDim.new(0,as.UIPadding/2),
 
 
 function as.User.Enable(aB)
+
+    task.spawn(function()
+        local Gradient = aA:FindFirstChild("RainbowGradient", true)
+        while Gradient do
+            Gradient.Rotation = (Gradient.Rotation + 3) % 360
+            task.wait()
+        end
+    end)
+
 as.User.Enabled=true
 al(as.UIElements.SideBarContainer,.25,{Size=UDim2.new(0,as.SideBarWidth,1,-as.Topbar.Height-42-(as.UIPadding*2))},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 aA.Visible=true
