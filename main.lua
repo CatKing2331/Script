@@ -3669,6 +3669,7 @@ TextSize=ah.TextSize,
 FontFace=Font.new(ab.Font,Enum.FontWeight.SemiBold),
 Text=ah.Title,
 TextColor3=typeof(ah.Color)=="Color3"and ab.GetTextColorForHSB(ah.Color)or nil,
+RichText=true,
 })
 
 local ak
@@ -10685,7 +10686,8 @@ BackgroundTransparency=1,
 Size=UDim2.new(1,-27,0,0),
 TextTruncate="AtEnd",
 TextXAlignment="Left",
-Name="DisplayName"
+Name="DisplayName",
+RichText=true,
 }),
 ak("TextLabel",{
 Text=as.User.Anonymous and"anonymous"or game.Players.LocalPlayer.Name,
@@ -10700,7 +10702,8 @@ BackgroundTransparency=1,
 Size=UDim2.new(1,-27,0,0),
 TextTruncate="AtEnd",
 TextXAlignment="Left",
-Name="UserName"
+Name="UserName",
+RichText=true,
 }),
 ak("UIListLayout",{
 Padding=UDim.new(0,4),
