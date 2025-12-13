@@ -1672,7 +1672,7 @@ ImageColor3=ah~="White"and"Button"or nil,
 ImageColor3=ah=="White"and Color3.new(1,1,1)or nil,
 Size=UDim2.new(1,0,1,0),
 Name="Squircle",
-ImageTransparency=ah=="Primary"and 0 or ah=="White"and 0 or 1
+ImageTransparency=ah=="Primary"and 0 or ah=="PrimaryBlack"and 0 or ah=="White"and 0 or 1
 }),
 
 ab.NewRoundFrame(am,"Squircle",{
@@ -1705,7 +1705,7 @@ ImageColor3=ah~="White"and"Outline"or nil,
 },
 Size=UDim2.new(1,0,1,0),
 ImageColor3=ah=="White"and Color3.new(0,0,0)or nil,
-ImageTransparency=ah=="Primary"and.95 or.85,
+ImageTransparency=(ah=="Primary"or ah=="PrimaryBlack")and.95 or.85,
 Name="SquircleOutline",
 },{
 ac("UIGradient",{
@@ -1748,9 +1748,9 @@ BackgroundTransparency=1,
 FontFace=Font.new(ab.Font,Enum.FontWeight.SemiBold),
 Text=ae or"Button",
 ThemeTag={
-TextColor3=(ah~="Primary"and ah~="White")and"Text",
+TextColor3=(ah~="Primary"and ah~="PrimaryBlack"and ah~="White")and"Text",
 },
-TextColor3=ah=="Primary"and Color3.new(1,1,1)or ah=="White"and Color3.new(0,0,0)or nil,
+TextColor3=(ah=="Primary"or ah=="PrimaryBlack")and Color3.new(0,0,0)or ah=="White"and Color3.new(0,0,0)or nil,
 AutomaticSize="XY",
 TextSize=18,
 })
@@ -1978,7 +1978,7 @@ PaddingBottom=UDim.new(0,ag.UIPadding),
 ag.UIElements.MainContainer=aa.NewRoundFrame(ag.UICorner,"Squircle",{
 Visible=false,
 
-ImageTransparency=ae and 0.15 or 0,
+ImageTransparency=ae and 0.55 or 0,
 Parent=ae and ad.Parent or ag.UIElements.FullScreen,
 Position=UDim2.new(0.5,0,0.5,0),
 AnchorPoint=Vector2.new(0.5,0.5),
@@ -11957,7 +11957,7 @@ Variant="Secondary",
 Title="Close Window",
 
 Callback=function()as:Destroy()end,
-Variant="Primary",
+Variant="PrimaryBlack",
 }
 }
 }
