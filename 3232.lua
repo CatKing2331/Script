@@ -38,7 +38,7 @@ end);
 game:GetService("UserInputService").InputChanged:Connect(function(a_2, b_2, c_2, ...) end);
 local Gaming_Spirit_Key = Instance.new("TextLabel", Frame);
 Gaming_Spirit_Key.Size = UDim2_New(1, 0, 0, 35);
-Gaming_Spirit_Key.Text = "Gaming Spirit Key";
+Gaming_Spirit_Key.Text = "ZTELTE";
 local Color3_New = Color3.new;
 Gaming_Spirit_Key.TextColor3 = Color3_New(1, 1, 1);
 Gaming_Spirit_Key.BackgroundTransparency = 1;
